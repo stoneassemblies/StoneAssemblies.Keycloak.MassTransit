@@ -19,13 +19,13 @@ namespace StoneAssemblies.Keycloak.Services.Interfaces
         /// <summary>
         ///     Finds user by id async.
         /// </summary>
-        /// <param name="messageUserId">
+        /// <param name="userId">
         ///     The message user id.
         /// </param>
         /// <returns>
         ///     The <see cref="Task" />.
         /// </returns>
-        Task<User> FindUserByIdAsync(string messageUserId);
+        Task<User> FindUserByIdAsync(string userId);
 
         /// <summary>
         ///     Finds user by username or email async.
