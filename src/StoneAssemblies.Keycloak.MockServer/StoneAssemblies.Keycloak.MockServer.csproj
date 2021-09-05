@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+   <PropertyGroup>
+	<TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+   <ItemGroup>
+     <Compile Remove="cache\**" />
+     <Compile Remove="lib\**" />
+     <Compile Remove="plugins\**" />
+     <Content Remove="cache\**" />
+     <Content Remove="lib\**" />
+     <Content Remove="plugins\**" />
+     <EmbeddedResource Remove="cache\**" />
+     <EmbeddedResource Remove="lib\**" />
+     <EmbeddedResource Remove="plugins\**" />
+     <None Remove="cache\**" />
+     <None Remove="lib\**" />
+     <None Remove="plugins\**" />
+   </ItemGroup>
+
+  <ItemGroup>
+      <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.2.2" />
+      <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.2" />
+      <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+      <PackageReference Include="StoneAssemblies.MassAuth" Version="1.0.0-alpha0106" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StoneAssemblies.Keycloak\StoneAssemblies.Keycloak.csproj" />
+  </ItemGroup>
+
+</Project>

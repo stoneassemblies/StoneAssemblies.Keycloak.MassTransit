@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30128.74
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{81CC7634-7D2D-4B0D-A7CA-1D7BF3AB4649}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{99212B12-D8FC-4858-9D68-CAEF1FF8956F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.Keycloak.Tests", "StoneAssemblies.Keycloak.Tests\StoneAssemblies.Keycloak.Tests.csproj", "{4A1513FC-6EE4-435A-B14D-C824EFF00FFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.Keycloak", "StoneAssemblies.Keycloak\StoneAssemblies.Keycloak.csproj", "{ECDF1A51-AF2A-421C-AC41-44A9C4DDC1F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StoneAssemblies.Keycloak.MockServer", "StoneAssemblies.Keycloak.MockServer\StoneAssemblies.Keycloak.MockServer.csproj", "{F5C4A8AC-0D77-489E-A5D6-BDCD6C72420F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A1513FC-6EE4-435A-B14D-C824EFF00FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A1513FC-6EE4-435A-B14D-C824EFF00FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A1513FC-6EE4-435A-B14D-C824EFF00FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A1513FC-6EE4-435A-B14D-C824EFF00FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECDF1A51-AF2A-421C-AC41-44A9C4DDC1F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECDF1A51-AF2A-421C-AC41-44A9C4DDC1F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECDF1A51-AF2A-421C-AC41-44A9C4DDC1F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECDF1A51-AF2A-421C-AC41-44A9C4DDC1F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C4A8AC-0D77-489E-A5D6-BDCD6C72420F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C4A8AC-0D77-489E-A5D6-BDCD6C72420F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C4A8AC-0D77-489E-A5D6-BDCD6C72420F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C4A8AC-0D77-489E-A5D6-BDCD6C72420F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4A1513FC-6EE4-435A-B14D-C824EFF00FFC} = {99212B12-D8FC-4858-9D68-CAEF1FF8956F}
+		{ECDF1A51-AF2A-421C-AC41-44A9C4DDC1F8} = {81CC7634-7D2D-4B0D-A7CA-1D7BF3AB4649}
+		{F5C4A8AC-0D77-489E-A5D6-BDCD6C72420F} = {99212B12-D8FC-4858-9D68-CAEF1FF8956F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC4F2C75-83F6-47DF-96F8-B205162A1E70}
+	EndGlobalSection
+EndGlobal
