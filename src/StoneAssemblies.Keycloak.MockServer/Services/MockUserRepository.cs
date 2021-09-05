@@ -87,7 +87,12 @@ namespace StoneAssemblies.Keycloak.MockServer.Services
         /// <inheritdoc />
         public async Task<bool> ValidateCredentialsAsync(string username, string password)
         {
-            return true;
+            if (password == "Password123!")
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

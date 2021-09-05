@@ -13,6 +13,7 @@ namespace StoneAssemblies.Keycloak.MockServer
 
     using StoneAssemblies.Keycloak.Messages;
     using StoneAssemblies.Keycloak.MockServer.Services;
+    using StoneAssemblies.Keycloak.Services;
     using StoneAssemblies.Keycloak.Services.Interfaces;
     using StoneAssemblies.MassAuth.Services;
 
@@ -116,6 +117,7 @@ namespace StoneAssemblies.Keycloak.MockServer
                     });
 
             serviceCollection.AddSingleton<IUserRepository, MockUserRepository>();
+            serviceCollection.AddSingleton<IEncryptionService>(provider => new AesEncryptionService("sOme*ShaREd*SecreT"));
             serviceCollection.AddHostedService<BusHostedService>();
         }
     }

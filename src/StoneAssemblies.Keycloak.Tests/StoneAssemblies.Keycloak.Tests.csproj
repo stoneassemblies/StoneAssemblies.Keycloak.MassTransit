@@ -34,4 +34,8 @@
 	</PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StoneAssemblies.Keycloak\StoneAssemblies.Keycloak.csproj" />
+  </ItemGroup>
+
 </Project>

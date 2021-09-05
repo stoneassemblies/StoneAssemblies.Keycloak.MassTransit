@@ -14,7 +14,7 @@ namespace StoneAssemblies.Keycloak
     using StoneAssemblies.Keycloak.Services.Interfaces;
 
     /// <summary>
-    /// The keycloak messages consumer.
+    ///     The keycloak messages consumer.
     /// </summary>
     public class KeycloakMessagesConsumer : IConsumer<UsersCountRequestMessage>,
                                             IConsumer<FindUserByIdRequestMessage>,
@@ -23,6 +23,8 @@ namespace StoneAssemblies.Keycloak
                                             IConsumer<ValidateCredentialsRequestMessage>,
                                             IConsumer<UpdateCredentialsRequestMessage>
     {
+        private readonly IEncryptionService encryptionService;
+
         /// <summary>
         ///     The user repository.
         /// </summary>
@@ -34,19 +36,20 @@ namespace StoneAssemblies.Keycloak
         /// <param name="userRepository">
         ///     The user repository.
         /// </param>
-        public KeycloakMessagesConsumer(IUserRepository userRepository)
+        public KeycloakMessagesConsumer(IUserRepository userRepository, IEncryptionService encryptionService)
         {
             this.userRepository = userRepository;
+            this.encryptionService = encryptionService;
         }
 
         /// <summary>
-        /// The consume.
+        ///     The consume.
         /// </summary>
         /// <param name="context">
-        /// The context.
+        ///     The context.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         async Task IConsumer<FindUserByIdRequestMessage>.Consume(ConsumeContext<FindUserByIdRequestMessage> context)
         {
@@ -59,13 +62,13 @@ namespace StoneAssemblies.Keycloak
         }
 
         /// <summary>
-        /// The consume.
+        ///     The consume.
         /// </summary>
         /// <param name="context">
-        /// The context.
+        ///     The context.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         async Task IConsumer<FindUserByUsernameOrEmailRequestMessage>.Consume(
             ConsumeContext<FindUserByUsernameOrEmailRequestMessage> context)
@@ -79,34 +82,33 @@ namespace StoneAssemblies.Keycloak
         }
 
         /// <summary>
-        /// The consume.
+        ///     The consume.
         /// </summary>
         /// <param name="context">
-        /// The context.
+        ///     The context.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         async Task IConsumer<UpdateCredentialsRequestMessage>.Consume(ConsumeContext<UpdateCredentialsRequestMessage> context)
         {
+            var password = this.encryptionService.Decrypt(context.Message.Password);
             await context.RespondAsync(
                 new UpdateCredentialsResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        Succeeded = await this.userRepository.UpdateCredentialsAsync(
-                                        context.Message.Username,
-                                        context.Message.Password)
+                        Succeeded = await this.userRepository.UpdateCredentialsAsync(context.Message.Username, password)
                     });
         }
 
         /// <summary>
-        /// The consume.
+        ///     The consume.
         /// </summary>
         /// <param name="context">
-        /// The context.
+        ///     The context.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         async Task IConsumer<UsersCountRequestMessage>.Consume(ConsumeContext<UsersCountRequestMessage> context)
         {
@@ -119,13 +121,13 @@ namespace StoneAssemblies.Keycloak
         }
 
         /// <summary>
-        /// The consume.
+        ///     The consume.
         /// </summary>
         /// <param name="context">
-        /// The context.
+        ///     The context.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         async Task IConsumer<UsersRequestMessage>.Consume(ConsumeContext<UsersRequestMessage> context)
         {
@@ -138,23 +140,22 @@ namespace StoneAssemblies.Keycloak
         }
 
         /// <summary>
-        /// The consume.
+        ///     The consume.
         /// </summary>
         /// <param name="context">
-        /// The context.
+        ///     The context.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         async Task IConsumer<ValidateCredentialsRequestMessage>.Consume(ConsumeContext<ValidateCredentialsRequestMessage> context)
         {
+            var password = this.encryptionService.Decrypt(context.Message.Password);
             await context.RespondAsync(
                 new ValidateCredentialsResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        Succeeded = await this.userRepository.ValidateCredentialsAsync(
-                                        context.Message.Username,
-                                        context.Message.Password)
+                        Succeeded = await this.userRepository.ValidateCredentialsAsync(context.Message.Username, password)
                     });
         }
     }
