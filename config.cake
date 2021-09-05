@@ -11,5 +11,5 @@ string[] ComponentProjects  = new [] {
 
 string TestProject = "src/StoneAssemblies.Keycloak.Tests/StoneAssemblies.Keycloak.Tests.csproj";
 
-string SonarProjectKey = "stoneassemblies_Keycloak.Extensibility";
+string SonarProjectKey = "stoneassemblies_Keycloak";
 string SonarOrganization = "stoneassemblies";
