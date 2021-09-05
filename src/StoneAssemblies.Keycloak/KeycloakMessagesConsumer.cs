@@ -6,6 +6,7 @@
 
 namespace StoneAssemblies.Keycloak
 {
+    using System.Linq;
     using System.Threading.Tasks;
 
     using MassTransit;
@@ -131,11 +132,12 @@ namespace StoneAssemblies.Keycloak
         /// </returns>
         async Task IConsumer<UsersRequestMessage>.Consume(ConsumeContext<UsersRequestMessage> context)
         {
+            var users = await this.userRepository.UsersAsync(context.Message.Offset, context.Message.Take).ToListAsync();
             await context.RespondAsync(
                 new UsersResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        Users = await this.userRepository.UsersAsync(context.Message.Offset, context.Message.Take)
+                        Users = users
                     });
         }
 

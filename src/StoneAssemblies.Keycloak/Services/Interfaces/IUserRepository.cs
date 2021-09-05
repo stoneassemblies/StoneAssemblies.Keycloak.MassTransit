@@ -12,79 +12,79 @@ namespace StoneAssemblies.Keycloak.Services.Interfaces
     using StoneAssemblies.Keycloak.Models;
 
     /// <summary>
-    /// The UserRepository interface.
+    ///     The UserRepository interface.
     /// </summary>
     public interface IUserRepository
     {
         /// <summary>
-        /// Finds user by id async.
+        ///     Finds user by id async.
         /// </summary>
         /// <param name="messageUserId">
-        /// The message user id.
+        ///     The message user id.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         Task<User> FindUserByIdAsync(string messageUserId);
 
         /// <summary>
-        /// Finds user by username or email async.
+        ///     Finds user by username or email async.
         /// </summary>
         /// <param name="usernameOrEmail">
-        /// The username or email.
+        ///     The username or email.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         Task<User> FindUserByUsernameOrEmailAsync(string usernameOrEmail);
 
         /// <summary>
-        /// Updates credentials async.
+        ///     Updates credentials async.
         /// </summary>
         /// <param name="username">
-        /// The username.
+        ///     The username.
         /// </param>
         /// <param name="password">
-        /// The password.
+        ///     The password.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         Task<bool> UpdateCredentialsAsync(string username, string password);
 
         /// <summary>
-        /// Users async.
+        ///     Users async.
         /// </summary>
         /// <param name="offset">
-        /// The offset.
+        ///     The offset.
         /// </param>
         /// <param name="take">
-        /// The take.
+        ///     The take.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The async enumeration  of <see cref="User" />.
         /// </returns>
-        Task<List<User>> UsersAsync(int offset, int take);
+        IAsyncEnumerable<User> UsersAsync(int offset, int take);
 
         /// <summary>
-        /// Users count async.
+        ///     Users count async.
         /// </summary>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         Task<int> UsersCountAsync();
 
         /// <summary>
-        /// Validates credentials async.
+        ///     Validates credentials async.
         /// </summary>
         /// <param name="username">
-        /// The username.
+        ///     The username.
         /// </param>
         /// <param name="password">
-        /// The password.
+        ///     The password.
         /// </param>
         /// <returns>
-        /// The <see cref="Task"/>.
+        ///     The <see cref="Task" />.
         /// </returns>
         Task<bool> ValidateCredentialsAsync(string username, string password);
     }

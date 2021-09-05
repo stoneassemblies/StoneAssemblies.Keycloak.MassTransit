@@ -53,17 +53,15 @@ namespace StoneAssemblies.Keycloak.MockServer.Services
         }
 
         /// <inheritdoc />
-        public async Task<List<User>> UsersAsync(int offset, int take)
+        public async IAsyncEnumerable<User> UsersAsync(int offset, int take)
         {
             var usersCount = await this.UsersCountAsync();
             var range = offset + take;
             var count = Math.Min(usersCount, range);
 
-            var users = new List<User>();
-
             for (var i = offset; i < count; i++)
             {
-                users.Add(
+                yield return 
                     new User
                         {
                             Id = Guid.NewGuid().ToString(),
@@ -72,10 +70,8 @@ namespace StoneAssemblies.Keycloak.MockServer.Services
                             Username = $"alexfdezsauco{i}",
                             Email = $"alexfdezsauco{i}@domain.cu",
                             Enabled = true
-                        });
+                        };
             }
-
-            return users;
         }
 
         /// <inheritdoc />
