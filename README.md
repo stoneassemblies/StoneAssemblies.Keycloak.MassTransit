@@ -1,0 +1,1 @@
+# StoneAssemblies.Keycloak.MassTransit
