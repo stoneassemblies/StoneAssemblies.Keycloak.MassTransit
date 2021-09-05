@@ -110,23 +110,6 @@ Task("Build")
                           .Append($"/p:Version={NuGetVersionV2}")
                           .Append($"/p:PackageVersion={NuGetVersionV2}")
                   });
-
-
-      // This is for local testing ...
-      var packageOutputDirectory = $"./output/nuget-local";
-      EnsureDirectoryExists(packageOutputDirectory);
-      CleanDirectory(packageOutputDirectory);
-
-      var settings = new DotNetCorePackSettings
-        {
-            Configuration = buildConfiguration,
-            OutputDirectory = packageOutputDirectory,
-            ArgumentCustomization = args => args
-                .Append($"/p:PackageVersion={NuGetVersionV2}")
-                .Append($"/p:Version={NuGetVersionV2}")
-        };
-
-        DotNetCorePack("src/StoneAssemblies.Extensibility.DemoPlugin/StoneAssemblies.Extensibility.DemoPlugin.csproj", settings);
   }); 
 
 Task("Test")
