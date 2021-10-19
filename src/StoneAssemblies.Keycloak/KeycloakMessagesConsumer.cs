@@ -161,4 +161,27 @@ namespace StoneAssemblies.Keycloak
                     });
         }
     }
+
+    /// <summary>
+    /// The keycloak messages consumer.
+    /// </summary>
+    /// <typeparam name="TUserRepository">
+    /// The user repository type.
+    /// </typeparam>
+    public class KeycloakMessagesConsumer<TUserRepository> : KeycloakMessagesConsumer where TUserRepository : IUserRepository
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeycloakMessagesConsumer{TUserRepository}"/> class.
+        /// </summary>
+        /// <param name="userRepository">
+        /// The user repository.
+        /// </param>
+        /// <param name="encryptionService">
+        /// The encryption service.
+        /// </param>
+        public KeycloakMessagesConsumer(TUserRepository userRepository, IEncryptionService encryptionService)
+            : base(userRepository, encryptionService)
+        {
+        }
+    }
 }
