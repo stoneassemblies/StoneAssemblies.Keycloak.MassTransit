@@ -6,12 +6,17 @@
 
 namespace StoneAssemblies.Keycloak
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
     using MassTransit;
 
+    using Serilog;
+
     using StoneAssemblies.Keycloak.Messages;
+    using StoneAssemblies.Keycloak.Models;
     using StoneAssemblies.Keycloak.Services.Interfaces;
 
     /// <summary>
@@ -24,6 +29,9 @@ namespace StoneAssemblies.Keycloak
                                             IConsumer<ValidateCredentialsRequestMessage>,
                                             IConsumer<UpdateCredentialsRequestMessage>
     {
+        /// <summary>
+        /// The encryption service.
+        /// </summary>
         private readonly IEncryptionService encryptionService;
 
         /// <summary>
@@ -54,11 +62,21 @@ namespace StoneAssemblies.Keycloak
         /// </returns>
         async Task IConsumer<FindUserByIdRequestMessage>.Consume(ConsumeContext<FindUserByIdRequestMessage> context)
         {
+            User user = null;
+            try
+            {
+                user = await this.userRepository.FindUserByIdAsync(context.Message.UserId);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error finding user by Id {UserId}", context.Message.UserId);
+            }
+
             await context.RespondAsync(
                 new FindUserByIdResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        User = await this.userRepository.FindUserByIdAsync(context.Message.UserId)
+                        User = user
                     });
         }
 
@@ -74,12 +92,22 @@ namespace StoneAssemblies.Keycloak
         async Task IConsumer<FindUserByUsernameOrEmailRequestMessage>.Consume(
             ConsumeContext<FindUserByUsernameOrEmailRequestMessage> context)
         {
+            User user = null;
+            try
+            {
+                user = await this.userRepository.FindUserByUsernameOrEmailAsync(context.Message.UsernameOrEmail);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error finding user by Username Or Email {UsernameOrEmail}", context.Message.UsernameOrEmail);
+            }
+
             await context.RespondAsync(
                 new FindUserByUsernameOrEmailResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        User = await this.userRepository.FindUserByUsernameOrEmailAsync(context.Message.UsernameOrEmail)
-                    });
+                        User = user
+                });
         }
 
         /// <summary>
@@ -94,12 +122,23 @@ namespace StoneAssemblies.Keycloak
         async Task IConsumer<UpdateCredentialsRequestMessage>.Consume(ConsumeContext<UpdateCredentialsRequestMessage> context)
         {
             var password = this.encryptionService.Decrypt(context.Message.Password);
+
+            var succeeded = false;
+            try
+            {
+                succeeded = await this.userRepository.UpdateCredentialsAsync(context.Message.Username, password);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error updating credentials of user {UserName}", context.Message.Username);
+            }
+
             await context.RespondAsync(
                 new UpdateCredentialsResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        Succeeded = await this.userRepository.UpdateCredentialsAsync(context.Message.Username, password)
-                    });
+                        Succeeded = succeeded
+                });
         }
 
         /// <summary>
@@ -113,11 +152,21 @@ namespace StoneAssemblies.Keycloak
         /// </returns>
         async Task IConsumer<UsersCountRequestMessage>.Consume(ConsumeContext<UsersCountRequestMessage> context)
         {
+            var count = 0;
+            try
+            {
+                count = await this.userRepository.UsersCountAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error counting users");
+            }
+
             await context.RespondAsync(
                 new UsersCountResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        Count = await this.userRepository.UsersCountAsync()
+                        Count = count
                     });
         }
 
@@ -132,7 +181,16 @@ namespace StoneAssemblies.Keycloak
         /// </returns>
         async Task IConsumer<UsersRequestMessage>.Consume(ConsumeContext<UsersRequestMessage> context)
         {
-            var users = await this.userRepository.UsersAsync(context.Message.Offset, context.Message.Take).ToListAsync();
+            List<User> users = null;
+            try
+            {
+                users = await this.userRepository.UsersAsync(context.Message.Offset, context.Message.Take).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error listing users");
+            }
+
             await context.RespondAsync(
                 new UsersResponseMessage
                     {
@@ -153,12 +211,23 @@ namespace StoneAssemblies.Keycloak
         async Task IConsumer<ValidateCredentialsRequestMessage>.Consume(ConsumeContext<ValidateCredentialsRequestMessage> context)
         {
             var password = this.encryptionService.Decrypt(context.Message.Password);
+
+            bool succeeded = false;
+            try
+            {
+                succeeded = await this.userRepository.ValidateCredentialsAsync(context.Message.Username, password);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Error validating credential of user {Username}", context.Message.Username);
+            }
+
             await context.RespondAsync(
                 new ValidateCredentialsResponseMessage
                     {
                         CorrelationId = context.Message.CorrelationId,
-                        Succeeded = await this.userRepository.ValidateCredentialsAsync(context.Message.Username, password)
-                    });
+                        Succeeded = succeeded
+                });
         }
     }
 
