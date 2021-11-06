@@ -2,7 +2,7 @@
 StoneAssemblies.Keycloak.MassTransit
 =============================
 
-StoneAssemblies MassTransit's Keycloak consumers implementations con
+StoneAssemblies MassTransit's Keycloak consumers implementations.
 
 Build Status
 ------------
