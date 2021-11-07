@@ -2,8 +2,9 @@ namespace StoneAssemblies.Keycloak.MockServer
 {
     using System;
 
+    using GreenPipes;
+
     using MassTransit;
-    using MassTransit.MultiBus;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -15,23 +16,41 @@ namespace StoneAssemblies.Keycloak.MockServer
     using Serilog;
 
     using StoneAssemblies.Contrib.MassTransit.Extensions;
-    using StoneAssemblies.Keycloak.Consumers;
-    using StoneAssemblies.Keycloak.Messages;
+    using StoneAssemblies.Keycloak.Extensions;
     using StoneAssemblies.Keycloak.MockServer.Services;
     using StoneAssemblies.Keycloak.Services;
     using StoneAssemblies.Keycloak.Services.Interfaces;
-    using StoneAssemblies.MassAuth.Services;
 
+    /// <summary>
+    /// The startup.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="configuration">
+        /// The configuration.
+        /// </param>
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
         }
 
+        /// <summary>
+        /// Gets the configuration.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// The configure.
+        /// </summary>
+        /// <param name="app">
+        /// The app.
+        /// </param>
+        /// <param name="env">
+        /// The env.
+        /// </param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -47,8 +66,12 @@ namespace StoneAssemblies.Keycloak.MockServer
                 endpoints => { endpoints.MapGet("/", async context => { await context.Response.WriteAsync("Hello World!"); }); });
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        /// <summary>
+        /// The configure services.
+        /// </summary>
+        /// <param name="serviceCollection">
+        /// The service collection.
+        /// </param>
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
             Log.Information("Configuring services");
@@ -61,17 +84,11 @@ namespace StoneAssemblies.Keycloak.MockServer
             var host = this.Configuration.GetSection("RabbitMQ")?["Host"] ?? "localhost";
             var port = this.Configuration.GetSection("RabbitMQ")?["Port"] ?? "6002";
 
-            
-            serviceCollection.AddMassTransit("PublicBus",
+            serviceCollection.AddMassTransit(
+                "PublicBus",
                 serviceCollectionConfigurator =>
                     {
-                        serviceCollectionConfigurator.AddConsumer<UsersCountRequestMessageConsumer<JaneDoeUserRepository>>();
-                        serviceCollectionConfigurator.AddConsumer<FindUserByIdRequestMessageConsumer<JaneDoeUserRepository>>();
-                        serviceCollectionConfigurator.AddConsumer<FindUserByUsernameOrEmailRequestMessageConsumer<JaneDoeUserRepository>>();
-                        serviceCollectionConfigurator.AddConsumer<UsersRequestMessageConsumer<JaneDoeUserRepository>>();
-                        serviceCollectionConfigurator.AddConsumer<ValidateCredentialsRequestMessageConsumer<JaneDoeUserRepository>>();
-                        serviceCollectionConfigurator.AddConsumer<UpdateCredentialsRequestMessageConsumer<JaneDoeUserRepository>>();
-
+                        serviceCollectionConfigurator.AddKeycloakConsumers<JaneDoeUserRepository>();
                         serviceCollectionConfigurator.AddBus(
                             context => Bus.Factory.CreateUsingRabbitMq(
                                 cfg =>
@@ -83,117 +100,18 @@ namespace StoneAssemblies.Keycloak.MockServer
                                                     configurator.Username(username);
                                                     configurator.Password(password);
                                                 });
-
-                                        cfg.ReceiveEndpoint(
-                                            nameof(UsersCountRequestMessage),
+                                        cfg.KeycloakReceiveEndpoints<JaneDoeUserRepository>(
+                                            context,
                                             e =>
                                                 {
-                                                    e.ConfigureConsumer<UsersCountRequestMessageConsumer<JaneDoeUserRepository>>(context);
-                                                });
-
-                                        cfg.ReceiveEndpoint(
-                                            nameof(FindUserByIdRequestMessage),
-                                            e =>
-                                                {
-                                                    e.ConfigureConsumer<FindUserByIdRequestMessageConsumer<JaneDoeUserRepository>>(context);
-                                                });
-
-                                        cfg.ReceiveEndpoint(
-                                            nameof(FindUserByUsernameOrEmailRequestMessage),
-                                            e =>
-                                                {
-                                                    e.ConfigureConsumer<FindUserByUsernameOrEmailRequestMessageConsumer<JaneDoeUserRepository>>(context);
-                                                });
-
-                                        cfg.ReceiveEndpoint(
-                                            nameof(UsersRequestMessage),
-                                            e =>
-                                                {
-                                                    e.ConfigureConsumer<UsersRequestMessageConsumer<JaneDoeUserRepository>>(context);
-                                                });
-
-                                        cfg.ReceiveEndpoint(
-                                            nameof(ValidateCredentialsRequestMessage),
-                                            e =>
-                                                {
-                                                    e.ConfigureConsumer<ValidateCredentialsRequestMessageConsumer<JaneDoeUserRepository>>(context);
-                                                });
-
-                                        cfg.ReceiveEndpoint(
-                                            nameof(UpdateCredentialsRequestMessage),
-                                            e =>
-                                                {
-                                                    e.ConfigureConsumer<UpdateCredentialsRequestMessageConsumer<JaneDoeUserRepository>>(context);
+                                                    e.PrefetchCount = 16;
+                                                    e.UseMessageRetry(x => x.Interval(2, 100));
                                                 });
                                     }));
                     });
-            
-            //serviceCollection.AddMassTransit("PrivateBus",
-            //    serviceCollectionConfigurator =>
-            //        {
-            //            serviceCollectionConfigurator.AddConsumer<UsersCountRequestMessageConsumer<JohnDoeUserRepository>>();
-            //            serviceCollectionConfigurator.AddConsumer<FindUserByIdRequestMessageConsumer<JohnDoeUserRepository>>();
-            //            serviceCollectionConfigurator.AddConsumer<FindUserByUsernameOrEmailRequestMessageConsumer<JohnDoeUserRepository>>();
-            //            serviceCollectionConfigurator.AddConsumer<UsersRequestMessageConsumer<JohnDoeUserRepository>>();
-            //            serviceCollectionConfigurator.AddConsumer<ValidateCredentialsRequestMessageConsumer<JohnDoeUserRepository>>();
-            //            serviceCollectionConfigurator.AddConsumer<UpdateCredentialsRequestMessageConsumer<JohnDoeUserRepository>>();
 
-            //            serviceCollectionConfigurator.AddBus(
-            //                context => Bus.Factory.CreateUsingRabbitMq(
-            //                    cfg =>
-            //                        {
-            //                            cfg.Host(
-            //                                new Uri(new Uri($"rabbitmq://{host}:{port}"), "private"),
-            //                                configurator =>
-            //                                    {
-            //                                        configurator.Username(username);
-            //                                        configurator.Password(password);
-            //                                    });
-            //                            cfg.ReceiveEndpoint(
-            //                                nameof(UsersCountRequestMessage),
-            //                                e =>
-            //                                {
-            //                                    e.ConfigureConsumer<UsersCountRequestMessageConsumer<JohnDoeUserRepository>>(context);
-            //                                });
+            // serviceCollection.AddSingleton<JohnDoeUserRepository>();
 
-            //                            cfg.ReceiveEndpoint(
-            //                                nameof(FindUserByIdRequestMessage),
-            //                                e =>
-            //                                {
-            //                                    e.ConfigureConsumer<FindUserByIdRequestMessageConsumer<JohnDoeUserRepository>>(context);
-            //                                });
-
-            //                            cfg.ReceiveEndpoint(
-            //                                nameof(FindUserByUsernameOrEmailRequestMessage),
-            //                                e =>
-            //                                {
-            //                                    e.ConfigureConsumer<FindUserByUsernameOrEmailRequestMessageConsumer<JohnDoeUserRepository>>(context);
-            //                                });
-
-            //                            cfg.ReceiveEndpoint(
-            //                                nameof(UsersRequestMessage),
-            //                                e =>
-            //                                {
-            //                                    e.ConfigureConsumer<UsersRequestMessageConsumer<JohnDoeUserRepository>>(context);
-            //                                });
-
-            //                            cfg.ReceiveEndpoint(
-            //                                nameof(ValidateCredentialsRequestMessage),
-            //                                e =>
-            //                                {
-            //                                    e.ConfigureConsumer<ValidateCredentialsRequestMessageConsumer<JohnDoeUserRepository>>(context);
-            //                                });
-
-            //                            cfg.ReceiveEndpoint(
-            //                                nameof(UpdateCredentialsRequestMessage),
-            //                                e =>
-            //                                {
-            //                                    e.ConfigureConsumer<UpdateCredentialsRequestMessageConsumer<JohnDoeUserRepository>>(context);
-            //                                });
-            //                        }));
-            //        });
-
-            serviceCollection.AddSingleton<JohnDoeUserRepository>();
             serviceCollection.AddSingleton<JaneDoeUserRepository>();
 
             serviceCollection.AddSingleton<IEncryptionService>(provider => new AesEncryptionService("sOme*ShaREd*SecreT"));
