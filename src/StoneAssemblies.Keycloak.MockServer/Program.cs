@@ -19,18 +19,18 @@ namespace StoneAssemblies.Keycloak.MockServer
     using Serilog;
 
     /// <summary>
-    /// The program.
+    ///     The program.
     /// </summary>
     public class Program
     {
         /// <summary>
-        /// The create host builder.
+        ///     The create host builder.
         /// </summary>
         /// <param name="args">
-        /// The args.
+        ///     The args.
         /// </param>
         /// <returns>
-        /// The <see cref="IHostBuilder"/>.
+        ///     The <see cref="IHostBuilder" />.
         /// </returns>
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
@@ -40,10 +40,10 @@ namespace StoneAssemblies.Keycloak.MockServer
         }
 
         /// <summary>
-        /// The main.
+        ///     The main.
         /// </summary>
         /// <param name="args">
-        /// The args.
+        ///     The args.
         /// </param>
         public static void Main(string[] args)
         {
