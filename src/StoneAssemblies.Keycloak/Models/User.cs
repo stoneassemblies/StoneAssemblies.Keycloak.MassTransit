@@ -40,5 +40,10 @@ namespace StoneAssemblies.Keycloak.Models
         /// Gets or sets the username.
         /// </summary>
         public string Username { get; set; }
-    }
+
+        /// <summary>
+        /// List of Roles separates by comma
+        /// </summary>
+        public string Roles{ get; set; }
+}
 }
