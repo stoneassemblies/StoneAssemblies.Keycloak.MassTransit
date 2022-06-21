@@ -30,8 +30,20 @@ namespace StoneAssemblies.Keycloak.MockServer.Services
         /// </summary>
         static JohnDoeUserRepository()
         {
+            var rng = new Random();
+            var rolesList = new List<string>() { "User", "Moderator", "Admin", "Client_Bicsa", "Client_Bpa" };
             for (var i = 0; i < 1000; i++)
             {
+                var rolesSeparateComma = "";
+                var cant = rng.Next(0, rolesList.Count);
+                for (var j = 0; j < cant; j++)
+                {
+                    rolesSeparateComma += rolesList.ElementAt(j);
+                    if (j < cant - 1)
+                    {
+                        rolesSeparateComma += ",";
+                    }
+                }
                 var guid = Guid.NewGuid();
                 Users[guid] = new User
                                   {
@@ -41,7 +53,8 @@ namespace StoneAssemblies.Keycloak.MockServer.Services
                                       Username = $"john.doe{i}",
                                       Email = $"john.doe{i}@domain.cu",
                                       Enabled = true,
-                                  };
+                                      Roles = rolesSeparateComma,
+                };
                 Passwords[guid] = "Password123!";
             }
         }
